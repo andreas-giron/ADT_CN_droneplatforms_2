@@ -47,9 +47,9 @@ public class JahBotServiceTest {
                 new JahBotServiceImpl(chatClientBuilder);
         var answer =
                 jahBotService.askQuestion(
-                        new Question("In welke stad gaat Jazzathome door elk jaar begin september?"));
+                        new Question("Van welke land komt het bedrijf CityMesh droneplatfrom?"));
         Assertions.assertThat(answer).isNotNull();
         Assertions.assertThat(answer.answer())
-                .isEqualTo("Jazzathome vindt elk jaar begin september plaats in de stad Mechelen.");
+                .isEqualTo("Het bedrijf CityMesh droneplatform komt uit belgie.");
     }
 }

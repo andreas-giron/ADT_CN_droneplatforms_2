@@ -57,7 +57,7 @@ public class CannedResponseGenerator {
         var generator = ctx.getBean(CannedResponseGenerator.class);
 
         generator.generate(
-                "In welke stad gaat Jazzathome door elk jaar begin september?",
+                "Van welke land komt het bedrijf CityMesh droneplatfrom?",
                 "raw-openai-response.json"
         );
 
