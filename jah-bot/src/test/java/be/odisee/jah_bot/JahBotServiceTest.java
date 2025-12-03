@@ -2,7 +2,6 @@ package be.odisee.jah_bot;
 
 import be.odisee.jah_bot.ai.Question;
 import be.odisee.jah_bot.service.JahBotServiceImpl;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -20,12 +19,13 @@ import org.wiremock.spring.EnableWireMock;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-@EnableWireMock(
-        @ConfigureWireMock(baseUrlProperties = "openai.base.url"))
-@SpringBootTest(
-        properties = "spring.ai.openai.base-url=${openai.base.url}")
+// Cette annotation démarre un faux serveur OpenAI (WireMock)
+@EnableWireMock(@ConfigureWireMock(baseUrlProperties = "spring.ai.openai.base-url"))
+@SpringBootTest
 public class JahBotServiceTest {
-    @Value("classpath:/canned/raw-openai-response.json")
+
+    // On charge notre faux fichier JSON créé à l'étape 3
+    @Value("classpath:/canned/citymesh-response.json")
     Resource responseResource;
 
     @Autowired
@@ -33,23 +33,26 @@ public class JahBotServiceTest {
 
     @BeforeEach
     public void setup() throws IOException {
-        var cannedResponse =
-                responseResource.getContentAsString(Charset.defaultCharset());
+        // On lit le fichier JSON
+        var cannedResponse = responseResource.getContentAsString(Charset.defaultCharset());
         var mapper = new ObjectMapper();
         var responseNode = mapper.readTree(cannedResponse);
+
+        // On dit à WireMock : "Si quelqu'un appelle l'URL /v1/chat/completions, renvoie ce JSON"
         WireMock.stubFor(WireMock.post("/v1/chat/completions")
                 .willReturn(ResponseDefinitionBuilder.okForJson(responseNode)));
     }
 
     @Test
-    public void testAskQuestion() {
-        var jahBotService =
-                new JahBotServiceImpl(chatClientBuilder);
-        var answer =
-                jahBotService.askQuestion(
-                        new Question("Van welke land komt het bedrijf CityMesh droneplatfrom?"));
+    public void testAskCityMeshQuestion() {
+        var service = new JahBotServiceImpl(chatClientBuilder);
+
+        // On pose une question (peu importe laquelle, WireMock renverra toujours la même chose)
+        var answer = service.askQuestion(new Question("Que fait CityMesh ?"));
+
+        // On vérifie que la réponse correspond bien à notre fichier JSON
         Assertions.assertThat(answer).isNotNull();
         Assertions.assertThat(answer.answer())
-                .isEqualTo("Het bedrijf CityMesh droneplatform komt uit belgie.");
+                .contains("Safety Drones"); // On vérifie un mot clé de la réponse
     }
 }

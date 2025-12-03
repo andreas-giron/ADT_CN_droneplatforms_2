@@ -1,0 +1,15 @@
+{
+  "id": "chatcmpl-CityMeshTest",
+  "object": "chat.completion",
+  "created": 1677652288,
+  "model": "gpt-4o-mini",
+  "choices": [{
+    "index": 0,
+    "message": {
+      "role": "assistant",
+      "content": "CityMesh propose des solutions de drones automatisés (Safety Drones) pour aider les services de secours et la police."
+    },
+    "finish_reason": "stop"
+  }],
+  "usage": { "prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30 }
+}
